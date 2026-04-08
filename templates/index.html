@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>NBA Trade Analyzer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="site-header__inner wrap">
+      <div class="brand">
+        <span class="brand__mark" aria-hidden="true"></span>
+        <div>
+          <span class="brand__name">Trade Analyzer</span>
+          <span class="brand__tag">NBA package &amp; salary sandbox</span>
+        </div>
+      </div>
+      <p class="site-header__note">
+        Salary uses <strong>tiered aggregation presets</strong> (sub–first / first / second apron–style bands), not a full CBA engine. Picks add trade value only ($0 salary). Optional <strong>match salary</strong> per player models BYC / poison-pill caps. Data: <code>python fetch_nba_league_stats.py</code> or <code>TRADE_EMULATOR_DATA</code>.
+      </p>
+    </div>
+  </header>
+
+  <main class="wrap main">
+    <section class="panel panel--inputs" aria-label="Trade inputs">
+      <div class="panel__head">
+        <h1 class="panel__title">Build trade</h1>
+        <p class="panel__meta">
+          One player name per line (or use <code>name|TEAM</code> or <code>id:2544</code> for NBA Stats id). Draft picks: multi-select.
+        </p>
+        <div class="field field--inline">
+          <label class="field__label">Season end year <span class="field__hint">(pick discounting)</span></label>
+          <input id="leagueYear" class="field__control field__control--narrow" type="number" value="2025" min="2020" max="2035" />
+        </div>
+      </div>
+      <div class="grid-2">
+        <div class="team-field">
+          <div class="team-field__label">
+            <span class="badge badge--a">Side A</span>
+            <label class="sr-only" for="labelA">Side A label</label>
+            <input id="labelA" class="team-field__title-input" type="text" value="OKC" placeholder="Label" />
+          </div>
+          <label class="field">
+            <span class="field__label">Salary aggregation band</span>
+            <select id="bracketA" class="field__control"></select>
+          </label>
+          <label class="field">
+            <span class="field__label">Players</span>
+            <textarea id="playersA" class="field__control" rows="5" placeholder="e.g. Holmgren">Holmgren
+Gilgeous-Alexander</textarea>
+          </label>
+          <label class="field">
+            <span class="field__label">Draft picks <span class="field__hint">(Ctrl/Cmd + click)</span></span>
+            <select id="picksA" class="field__control field__control--select" multiple size="7"></select>
+          </label>
+        </div>
+        <div class="team-field">
+          <div class="team-field__label">
+            <span class="badge badge--b">Side B</span>
+            <label class="sr-only" for="labelB">Side B label</label>
+            <input id="labelB" class="team-field__title-input" type="text" value="DEN" placeholder="Label" />
+          </div>
+          <label class="field">
+            <span class="field__label">Salary aggregation band</span>
+            <select id="bracketB" class="field__control"></select>
+          </label>
+          <label class="field">
+            <span class="field__label">Players</span>
+            <textarea id="playersB" class="field__control" rows="5" placeholder="e.g. Jokić">Jokić</textarea>
+          </label>
+          <label class="field">
+            <span class="field__label">Draft picks</span>
+            <select id="picksB" class="field__control field__control--select" multiple size="7"></select>
+          </label>
+        </div>
+      </div>
+      <div class="toolbar">
+        <button type="button" id="runBtn" class="btn btn--primary">Run analysis</button>
+        <button type="button" id="exportBtn" class="btn btn--ghost">Download JSON</button>
+        <button type="button" id="reloadBtn" class="btn btn--ghost" title="Re-read players CSV">Reload data</button>
+        <span id="status" class="toolbar__status" role="status"></span>
+      </div>
+    </section>
+
+    <section id="results" class="results hidden" aria-live="polite">
+      <div class="results__grid">
+        <article class="card card--stat">
+          <h2 class="card__title">Salary matching</h2>
+          <div id="salaryBlock" class="stat-grid"></div>
+          <p id="salaryVerdict" class="callout callout--bordered" data-tone="neutral"></p>
+        </article>
+
+        <article class="card card--stat">
+          <h2 class="card__title">Trade value</h2>
+          <div id="tvBlock" class="stat-grid"></div>
+        </article>
+
+        <article class="card card--wide card--suggestions">
+          <h2 class="card__title">Balancing ideas</h2>
+          <p class="card__subtitle">Heuristics only — real trades need full cap context (apron, BYC, S&amp;Ts, etc.).</p>
+          <ul id="balanceList" class="suggestion-list"></ul>
+        </article>
+
+        <article class="card card--wide">
+          <h2 class="card__title">Roster &amp; assets</h2>
+          <div class="table-scroll">
+            <table id="profileTable" class="data-table">
+              <thead>
+                <tr>
+                  <th>Side</th>
+                  <th>Asset</th>
+                  <th>Team</th>
+                  <th>Age</th>
+                  <th>Salary ($M)</th>
+                  <th>Yrs</th>
+                  <th>TV</th>
+                  <th>Talent</th>
+                  <th>Contract</th>
+                  <th>Match $M</th>
+                  <th>PTS</th>
+                  <th>AST</th>
+                  <th>REB</th>
+                  <th>BPM</th>
+                  <th>VORP</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </article>
+
+        <article class="card card--chart">
+          <h2 class="card__title">Metric comparison</h2>
+          <p class="card__subtitle">Players only; picks affect totals above.</p>
+          <div class="chart-wrap">
+            <canvas id="barChart" height="120"></canvas>
+          </div>
+        </article>
+
+        <article class="card card--chart">
+          <h2 class="card__title">Six-dimension radar</h2>
+          <p class="card__subtitle">Normalized to the current player pool.</p>
+          <div class="chart-wrap">
+            <canvas id="radarChart" height="200"></canvas>
+          </div>
+        </article>
+
+        <article class="card card--wide card--verdict">
+          <h2 class="card__title">Verdict</h2>
+          <p id="verdictText" class="verdict-lead"></p>
+          <p id="verdictReason" class="verdict-detail"></p>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer wrap">
+    <p>Analytics are illustrative. Not financial or legal advice.</p>
+  </footer>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

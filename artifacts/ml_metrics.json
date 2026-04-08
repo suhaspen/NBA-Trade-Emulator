@@ -1,0 +1,42 @@
+{
+  "target": "vorp",
+  "feature_columns": [
+    "age",
+    "pts",
+    "ast",
+    "reb",
+    "stl",
+    "blk",
+    "ts_pct",
+    "games_played",
+    "min_per_game",
+    "salary_mm",
+    "contract_years_remaining"
+  ],
+  "n_rows_used": 573,
+  "n_train": 343,
+  "n_val": 115,
+  "n_test": 115,
+  "chosen_model": "ridge",
+  "ridge_validation": {
+    "mae": 0.49119363461824583,
+    "rmse": 0.7704058288926495,
+    "r2": 0.7370520188541678
+  },
+  "ridge_test": {
+    "mae": 0.5106591108314729,
+    "rmse": 1.1505611191117882,
+    "r2": 0.6141961991612989
+  },
+  "random_forest_validation": {
+    "mae": 0.6080946947048392,
+    "rmse": 0.8977854762656833,
+    "r2": 0.6429114937767526
+  },
+  "random_forest_test": {
+    "mae": 0.6151264805417865,
+    "rmse": 1.1499028749820992,
+    "r2": 0.6146375150353027
+  },
+  "note": "Test metrics are from models fit on train only. Chosen model was refit on train+val before generating ml_player_scores.csv; scores are offline, not live inference."
+}

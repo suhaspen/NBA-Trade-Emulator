@@ -1,0 +1,43 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  color-scheme: dark;
+}
+
+body {
+  margin: 0;
+}
+
+@layer utilities {
+  .bg-app-gradient {
+    background-color: #07080c;
+    background-image:
+      radial-gradient(ellipse 100% 90% at 50% -30%, rgba(56, 189, 248, 0.14), transparent 55%),
+      radial-gradient(ellipse 80% 70% at 100% 20%, rgba(129, 140, 248, 0.1), transparent 50%),
+      radial-gradient(ellipse 60% 50% at 0% 100%, rgba(13, 148, 136, 0.07), transparent 45%),
+      radial-gradient(ellipse 120% 80% at 50% 120%, rgba(15, 23, 42, 0.9), transparent);
+  }
+
+  .text-gradient-brand {
+    background: linear-gradient(135deg, #7dd3fc 0%, #38bdf8 40%, #a5b4fc 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+}
+
+select.team-select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' fill='none' stroke='%238b93a7' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 8 4 4 4-4'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.65rem center;
+  background-size: 1.15rem;
+  padding-right: 2.25rem;
+}
+
+/* Native multi-select / options: best-effort dark styling where supported */
+select option {
+  background-color: #141824;
+  color: #e8ecf4;
+}

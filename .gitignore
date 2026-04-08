@@ -1,0 +1,83 @@
+# =========================
+# OS / Editor
+# =========================
+.DS_Store
+Thumbs.db
+
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# =========================
+# Python
+# =========================
+__pycache__/
+*.py[cod]
+*.pyd
+*.pyo
+
+# Virtualenvs
+.venv/
+venv/
+env/
+.ENV/
+ENV/
+
+# Pytest / coverage
+.pytest_cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# Type check / tooling caches
+.mypy_cache/
+.pyright/
+.ruff_cache/
+
+# =========================
+# Node / Frontend
+# =========================
+node_modules/
+frontend/node_modules/
+
+# Build outputs
+dist/
+build/
+frontend/dist/
+
+# Vite / misc caches
+frontend/.vite/
+*.tsbuildinfo
+
+# =========================
+# Env / Secrets
+# =========================
+.env
+.env.*
+*.env
+*.env.*
+
+*.pem
+*.key
+*.p12
+*.pfx
+
+# =========================
+# ML / Artifacts
+# =========================
+# We intentionally keep small, reviewer-friendly artifacts tracked:
+# - data/players.csv
+# - data/ml_player_scores.csv
+# - artifacts/ml_metrics.json
+# - artifacts/ml_vorp_model.joblib (currently tiny; ignore later if it grows)
+#
+# If model artifacts grow large, consider enabling:
+# *.joblib
+# *.pkl
+# artifacts/
+
+# =========================
+# Docker local state (optional)
+# =========================
+docker-compose.override.yml
