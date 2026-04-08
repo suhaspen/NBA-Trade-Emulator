@@ -3,7 +3,6 @@
 # =========================
 .DS_Store
 Thumbs.db
-
 .vscode/
 .idea/
 *.swp
@@ -58,6 +57,7 @@ frontend/.vite/
 *.env
 *.env.*
 
+# Common secret file patterns
 *.pem
 *.key
 *.p12
@@ -66,13 +66,10 @@ frontend/.vite/
 # =========================
 # ML / Artifacts
 # =========================
-# We intentionally keep small, reviewer-friendly artifacts tracked:
-# - data/players.csv
-# - data/ml_player_scores.csv
-# - artifacts/ml_metrics.json
-# - artifacts/ml_vorp_model.joblib (currently tiny; ignore later if it grows)
+# Keep the project reproducible and reviewer-friendly:
+# - Commit: data/players.csv, data/ml_player_scores.csv, artifacts/ml_metrics.json
+# - Current model artifact is tiny; if it grows, uncomment ignores below.
 #
-# If model artifacts grow large, consider enabling:
 # *.joblib
 # *.pkl
 # artifacts/
