@@ -43,17 +43,6 @@ Reads `data/players.csv` (or `--input`), drops rows without `vorp`, uses an **11
 
 Includes **offline training** on `tests/fixtures/ml_training_tiny.csv`, **ML CSV merge** tests, and **API** checks for ML fields when scores are injected.
 
-## CI
-
-`.github/workflows/ci.yml` — **pytest** + **`npm ci` + `npm run build`**.
-
-## Docker
-
-```bash
-docker build -t nba-trade-emulator .
-docker run --rm -p 8000:8000 nba-trade-emulator
-```
-
 Image includes `ml/` (training module), `artifacts/`, and `data/` (player CSV + bundled ML scores if present).
 
 ## Refreshing player data
